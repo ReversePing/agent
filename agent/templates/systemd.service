@@ -1,0 +1,10 @@
+[Unit]
+Description="The ReversePing agent gives you insight about devices and their uptime on your network."
+
+[Service]
+ExecStart={{bin_path}} start
+Restart=on-failure
+User={{user}}
+
+[Install]
+WantedBy=default.target

@@ -1,0 +1,13 @@
+[package]
+name = "librp"
+version = "0.1.0"
+edition = "2018"
+authors = ["Alex Grinman <alex@reverseping.net>"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+chrono = "0.4.11"
+mac_oui = { version = "0.3.3", features = ["with-db"] }
+lazy_static = "1.4.0"
