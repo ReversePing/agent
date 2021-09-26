@@ -176,10 +176,17 @@ async fn resolve3(ip: IpAddr, service: &str) -> Result<(), Error> {
 
 #[cfg(test)]
 mod tests {
-    use trust_dns_resolver::dns_sd::DnsSdHandle;
+    use std::net::SocketAddr;
+
+    use trust_dns_resolver::{
+        config::{NameServerConfig, ResolverConfig, ResolverOpts},
+        dns_sd::DnsSdHandle,
+        TokioAsyncResolver, TokioHandle,
+    };
 
     use super::*;
 
+    #[ignore]
     #[tokio::test]
     async fn test_resolution() {
         pretty_env_logger::init();
@@ -196,6 +203,7 @@ mod tests {
         assert!(result.hostname.is_some());
     }
 
+    #[ignore]
     #[test]
     fn test_arpa_name() {
         let n1 = arpa_name("192.168.0.14".parse().unwrap());
@@ -208,6 +216,7 @@ mod tests {
         );
     }
 
+    #[ignore]
     #[tokio::test]
     async fn test_resolution_2() {
         pretty_env_logger::init();
@@ -229,6 +238,7 @@ mod tests {
     //         .expect("failed");
     // }
 
+    #[ignore]
     #[tokio::test]
     async fn test_dnssd() {
         std::env::set_var("RUST_LOG", "debug");
@@ -270,6 +280,7 @@ mod tests {
         dbg!(r);
     }
 
+    #[ignore]
     #[tokio::test]
     async fn test_client_dns_sd() {
         std::env::set_var("RUST_LOG", "debug");
