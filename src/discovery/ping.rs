@@ -61,5 +61,5 @@ async fn ping(ip: IpAddr) -> Result<(IpAddr, Duration), Box<dyn std::error::Erro
     pinger.set_timeout(2);
     let buf = winping::Buffer::with_data(vec![0]);
     let duration = pinger.send(ip, buf).await.result?;
-    Ok((ip, duration))
+    Ok((ip, Duration::from_secs(duration as u64)))
 }

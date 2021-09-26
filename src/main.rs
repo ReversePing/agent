@@ -102,6 +102,7 @@ async fn run(agent: &AgentConfig) -> Result<(), Box<dyn std::error::Error>> {
         let _ = Agent::write_log("running in agent-only mode (no local device scanning)");
         HashMap::default()
     } else {
+        #[cfg(unix)]
         sudo::escalate_if_needed().expect("Root access needed to scan devices");
 
         let devices = discovery::discover_devices().await?;

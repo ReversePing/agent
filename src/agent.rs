@@ -142,12 +142,23 @@ impl Agent {
         Ok(())
     }
 
+    // TODO: macOS + windows daemons
     #[cfg(target_os = "macos")]
     pub fn install_daemon() -> Result<(), Error> {
         Ok(())
     }
 
     #[cfg(target_os = "macos")]
+    pub fn uninstall_daemon() -> Result<(), Error> {
+        Ok(())
+    }
+
+    #[cfg(target_os = "windows")]
+    pub fn install_daemon() -> Result<(), Error> {
+        Ok(())
+    }
+
+    #[cfg(target_os = "windows")]
     pub fn uninstall_daemon() -> Result<(), Error> {
         Ok(())
     }
