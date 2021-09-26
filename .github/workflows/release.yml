@@ -44,34 +44,34 @@ jobs:
           path: target/release/reverseping
 
 
-  build_win:
-    runs-on: windows-latest
-    steps:
-      - name: Cache cargo registry
-        uses: actions/cache@v1
-        with:
-          path: ~/.cargo/registry
-          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
-      - name: Cache cargo index
-        uses: actions/cache@v1
-        with:
-          path: ~/.cargo/git
-          key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.lock') }}
-      - name: Cache cargo build
-        uses: actions/cache@v1
-        with:
-          path: target
-          key: ${{ runner.os }}-cargo-build-target-${{ hashFiles('**/Cargo.lock') }}
+  # build_win:
+  #   runs-on: windows-latest
+  #   steps:
+  #     - name: Cache cargo registry
+  #       uses: actions/cache@v1
+  #       with:
+  #         path: ~/.cargo/registry
+  #         key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+  #     - name: Cache cargo index
+  #       uses: actions/cache@v1
+  #       with:
+  #         path: ~/.cargo/git
+  #         key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.lock') }}
+  #     - name: Cache cargo build
+  #       uses: actions/cache@v1
+  #       with:
+  #         path: target
+  #         key: ${{ runner.os }}-cargo-build-target-${{ hashFiles('**/Cargo.lock') }}
 
-      - uses: actions/checkout@v2
-      - name: Build Client
-        run: cargo build --release
+  #     - uses: actions/checkout@v2
+  #     - name: Build Client
+  #       run: cargo build --release
 
-      - name: Upload Client Binary
-        uses: actions/upload-artifact@v1
-        with:
-          name: ${{ matrix.os }}
-          path: target/release/reverseping.exe
+  #     - name: Upload Client Binary
+  #       uses: actions/upload-artifact@v1
+  #       with:
+  #         name: ${{ matrix.os }}
+  #         path: target/release/reverseping.exe
 
   publish:
     needs: [build, build_win]
@@ -104,7 +104,6 @@ jobs:
           chmod +x macOS/reverseping/${{ steps.get_version.outputs.VERSION }}/bin/reverseping
           chmod +x linux/reverseping
           export TAG="${{ steps.get_version.outputs.VERSION }}"
-          cp windows/reverseping.exe reverseping-windows.exe
           tar -C macOS/ -czvf "reverseping-$TAG.catalina.bottle.tar.gz" reverseping/${{ steps.get_version.outputs.VERSION }}/bin/reverseping
           cp "reverseping-$TAG.catalina.bottle.tar.gz" "reverseping-$TAG.big_sur.bottle.tar.gz"
           tar -C linux/ -czvf reverseping-linux.tar.gz reverseping
