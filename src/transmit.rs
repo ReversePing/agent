@@ -8,7 +8,7 @@ pub enum Error {
     #[error("failed to transmit ping report")]
     Send(#[from] reqwest::Error),
     #[error("server transmit failed: {0}")]
-    Server(librp::ApiError<String>),
+    Server(reverseping::ApiError<String>),
 }
 
 #[derive(Clone)]
@@ -43,7 +43,7 @@ impl Transmitter {
                 }: DiscoveredDevice = device;
                 (
                     name,
-                    librp::DevicePing {
+                    reverseping::DevicePing {
                         hostname,
                         local_address: Some(local_address.to_string()),
                         mac: Some(mac),
@@ -56,7 +56,7 @@ impl Transmitter {
             })
             .collect();
 
-        let report = librp::PingReport { devices };
+        let report = reverseping::PingReport { devices };
         let response = self.client.post(url).json(&report).send().await?;
         if !response.status().is_success() {
             let error = response.json().await?;

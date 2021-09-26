@@ -73,7 +73,7 @@ pub async fn discover_devices(
             .hostname
             .or(service.map(|s| s.friendly_name.clone()).flatten());
 
-        let vendor = librp::get_vendor_for_mac(&device.mac);
+        let vendor = reverseping::get_vendor_for_mac(&device.mac);
 
         let meta = if device.host.meta.is_empty() {
             None

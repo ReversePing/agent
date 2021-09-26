@@ -1,22 +1,13 @@
 use super::ping::PingResult;
 use itertools::Itertools;
-use std::{
-    net::{IpAddr, SocketAddr},
-    time::Duration,
-    vec,
-};
+use std::{net::IpAddr, time::Duration, vec};
 use thiserror::Error;
-use trust_dns_resolver::{
-    config::{NameServerConfig, ResolverConfig, ResolverOpts},
-    error::ResolveError,
-    TokioAsyncResolver, TokioHandle,
-};
+use trust_dns_resolver::error::ResolveError;
 
 use std::str::FromStr;
 use tokio::net::UdpSocket;
 use trust_dns_client::{
     client::{AsyncClient, ClientHandle},
-    multicast::{MdnsClientStream, MdnsQueryType, MdnsStream},
     proto::error::ProtoError,
 };
 use trust_dns_client::{
@@ -141,6 +132,7 @@ fn arpa_name(ip: IpAddr) -> String {
     }
 }
 
+#[allow(unused)]
 async fn resolve3(ip: IpAddr, service: &str) -> Result<(), Error> {
     // let (mdns_stream, mdns_handle) = MdnsClientStream::new_ipv4(MdnsQueryType::OneShot, None, None);
     // let (mut client, mdns_bg) = AsyncClient::new(mdns_stream, mdns_handle, None).await?;

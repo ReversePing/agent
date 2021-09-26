@@ -10,8 +10,8 @@ pub struct Agent;
 pub enum Error {
     #[error("{0}")]
     IO(#[from] std::io::Error),
-    #[error("System daemon directory not found")]
-    SystemdDirectory,
+    // #[error("System daemon directory not found")]
+    // SystemdDirectory,
     #[error("User directory not found")]
     UserDirectory,
     #[error("Agent not configured")]
