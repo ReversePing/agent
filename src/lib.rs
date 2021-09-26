@@ -57,7 +57,7 @@ mod tests {
     fn test_mac() {
         assert_eq!(
             super::get_vendor_for_mac("60:12:8b:8f:38:ac").unwrap(),
-            "Apple, Inc".to_string()
+            "Canon Inc".to_string()
         )
     }
 }
