@@ -33,6 +33,6 @@ jobs:
 
       - uses: actions/checkout@v2
       - name: Build All
-        run: cargo build --verbose
+        run: cargo build
       - name: Test All
         run: cargo test --all
