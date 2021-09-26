@@ -74,7 +74,7 @@ jobs:
   #         path: target/release/reverseping.exe
 
   publish:
-    needs: [build, build_win]
+    needs: [build]
     runs-on: ubuntu-latest
     steps:
       - name: Get the version
