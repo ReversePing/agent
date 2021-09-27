@@ -36,13 +36,58 @@ jobs:
       - uses: actions/checkout@v2
       - name: Build Client
         run: cargo build --release
+
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
       
       - name: Upload Client Binary
         uses: actions/upload-artifact@v1
         with:
-          name: ${{ matrix.os }}
+          name: reverseping-${{matrix.os}}
           path: target/release/reverseping
 
+
+  publish:
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}    
+        
+      - name: Download macOS
+        uses: actions/download-artifact@v1
+        with:
+          name: reverseping-macOS
+          path: macOS/reverseping/${{ steps.get_version.outputs.VERSION }}/bin/
+
+      - name: Download ubuntu
+        uses: actions/download-artifact@v1
+        with:
+          name: reverseping-ubuntu-latest
+          path: linux/
+
+      - name: Compress
+        run: |
+          chmod +x macOS/reverseping/${{ steps.get_version.outputs.VERSION }}/bin/reverseping
+          chmod +x linux/reverseping
+          export TAG="${{ steps.get_version.outputs.VERSION }}"
+          # create the bottle
+          tar -C macOS/ -czvf "reverseping-$TAG.big_sur.bottle.tar.gz" "reverseping/$TAG/bin/reverseping"
+          # create bottles for distros
+          cp "reverseping-$TAG.big_sur.bottle.tar.gz" "reverseping-$TAG.catalina.bottle.tar.gz"
+          cp "reverseping-$TAG.big_sur.bottle.tar.gz" "reverseping-$TAG.monterey.bottle.tar.gz"
+          cp "reverseping-$TAG.big_sur.bottle.tar.gz" "reverseping-Darwin-x86_64.tar.gz"
+          # create linux
+          tar -C linux/ -czvf "reverseping-$(uname -s)-$(uname -m).tar.gz" reverseping          
+
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        with:
+          allowUpdates: true
+          artifacts: "reverseping-${{ steps.get_version.outputs.VERSION }}.big_sur.bottle.tar.gz,reverseping-${{ steps.get_version.outputs.VERSION }}.catalina.bottle.tar.gz,reverseping-${{ steps.get_version.outputs.VERSION }}.monterey.bottle.tar.gz,reverseping-Linux-x86_64.tar.gz,reverseping-Darwin-x86_64.tar.gz"
+          token: ${{ secrets.GITHUB_TOKEN }}
 
   # build_win:
   #   runs-on: windows-latest
@@ -62,55 +107,11 @@ jobs:
   #       with:
   #         path: target
   #         key: ${{ runner.os }}-cargo-build-target-${{ hashFiles('**/Cargo.lock') }}
-
   #     - uses: actions/checkout@v2
   #     - name: Build Client
   #       run: cargo build --release
-
   #     - name: Upload Client Binary
   #       uses: actions/upload-artifact@v1
   #       with:
   #         name: ${{ matrix.os }}
   #         path: target/release/reverseping.exe
-
-  publish:
-    needs: [build]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Get the version
-        id: get_version
-        run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}    
-        
-      - name: Download macOS
-        uses: actions/download-artifact@v1
-        with:
-          name: reverseping-macOS-latest
-          path: macOS/reverseping/${{ steps.get_version.outputs.VERSION }}/bin/
-
-      - name: Download ubuntu
-        uses: actions/download-artifact@v1
-        with:
-          name: reverseping-ubuntu-latest
-          path: linux/
-
-      - name: Download windows
-        uses: actions/download-artifact@v1
-        with:
-          name: reverseping-windows-latest.exe
-          path: windows/
-
-      - name: Compress
-        run: |
-          chmod +x macOS/reverseping/${{ steps.get_version.outputs.VERSION }}/bin/reverseping
-          chmod +x linux/reverseping
-          export TAG="${{ steps.get_version.outputs.VERSION }}"
-          tar -C macOS/ -czvf "reverseping-$TAG.catalina.bottle.tar.gz" reverseping/${{ steps.get_version.outputs.VERSION }}/bin/reverseping
-          cp "reverseping-$TAG.catalina.bottle.tar.gz" "reverseping-$TAG.big_sur.bottle.tar.gz"
-          tar -C linux/ -czvf reverseping-linux.tar.gz reverseping
-
-      - name: Create Release
-        uses: ncipollo/release-action@v1
-        with:
-          allowUpdates: true
-          artifacts: "reverseping-${{ steps.get_version.outputs.VERSION }}.big_sur.bottle.tar.gz,reverseping-${{ steps.get_version.outputs.VERSION }}.catalina.bottle.tar.gz,reverseping-linux.tar.gz,reverseping-windows.exe"
-          token: ${{ secrets.GITHUB_TOKEN }}
